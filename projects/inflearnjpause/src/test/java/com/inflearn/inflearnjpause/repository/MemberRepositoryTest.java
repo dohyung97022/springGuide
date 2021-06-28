@@ -1,6 +1,6 @@
 package com.inflearn.inflearnjpause.repository;
 
-import com.inflearn.inflearnjpause.model.Member;
+import com.inflearn.inflearnjpause.domain.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +20,7 @@ class MemberRepositoryTest {
     public void testMember() throws Exception{
         //given
         Member member = new Member();
-        member.setUserName("김도형");
+        member.setName("김도형");
 
         //when
         Long savedId = memberRepository.save(member);
@@ -28,7 +28,7 @@ class MemberRepositoryTest {
 
         //then
         Assertions.assertThat(findMember.getId()).isEqualTo(member.getId());
-        Assertions.assertThat(findMember.getUserName()).isEqualTo(member.getUserName());
+        Assertions.assertThat(findMember.getName()).isEqualTo(member.getName());
         Assertions.assertThat(findMember).isEqualTo(member);
     }
 }

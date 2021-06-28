@@ -1,6 +1,6 @@
 package com.inflearn.inflearnjpause.repository;
 
-import com.inflearn.inflearnjpause.model.Member;
+import com.inflearn.inflearnjpause.domain.Member;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
