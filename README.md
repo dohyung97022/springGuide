@@ -48,7 +48,7 @@
     spring.datasource.password=
     spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
     ``` 
-    testDB는 당연히   
+    testDB는 사용자가 지정한 명칭으로 바꿔도 된다.      
     그 이외에 추가하면 좋은 properties 도 잊지 말자   
     ```
     # 테이블이 없다면 자동으로 생성한다.
