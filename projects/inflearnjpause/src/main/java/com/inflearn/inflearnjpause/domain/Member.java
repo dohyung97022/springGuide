@@ -11,7 +11,7 @@ import java.util.List;
 
 @Setter
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 public class Member {
     @Id
@@ -19,12 +19,11 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column
     private String name;
 
     @Embedded
     private Address address;
 
     @OneToMany(mappedBy = "member")
-    private List<Order> orders = new ArrayList<>();
+    private List<Order> order = new ArrayList<>();
 }

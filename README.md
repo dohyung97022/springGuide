@@ -15,8 +15,7 @@
 * # C
 * # D
 * # E
-  <details>
-  <summary>
+  <details><summary>
   @Entity 에서는 setter 를 열지 말자    
 
   @Setter 가 열려 있어 너무 많은 변경 포인트가 있다면 유지보수가 어렵다
@@ -236,6 +235,51 @@
   </details>
 * # O
 * # P
+  <details>
+  <summary>
+  Persistance.xml 파일
+  
+  설정용 파일
+  </summary>
+  <br>
+  application.properties 의 구 버전이다.   
+  
+  ```
+  <?xml version="1.0" encoding="UTF-8"?>
+  <persistence version="2.2"
+  xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+  <persistence-unit name="hello">
+  <properties>
+  <!-- 필수 속성 -->
+  <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+  <property name="javax.persistence.jdbc.user" value="sa"/>
+  <property name="javax.persistence.jdbc.password" value=""/>
+  <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/testDB"/>
+  <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+  
+              <!-- 옵션 -->
+              <property name="hibernate.show_sql" value="true"/>
+              <property name="hibernate.format_sql" value="true"/>
+              <property name="hibernate.use_sql_comments" value="true"/>
+              <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
+          </properties>
+      </persistence-unit>
+  </persistence>
+  ``` 
+  
+  `<persistence-unit name="hello">` 에서 name 을 지정해 주면   
+  ```java
+  Persistence.createEntityManagerFactory("hello");   
+  EntityManager em = emf.createEntityManager();
+  ```
+  으로 연결된다.   
+  
+  `<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>`의 dialect 는 방언인데 
+  다양한 데이터베이스를 사투리로서 이해하고 있다. `H2Dialect` 로 주어진 사투리를 표준말로 변경하겠다는 의미이다.
+
+  필요에 따라 추가적으로 옵션을 넣을 수 있다.
+  </details>
 * # Q
 * # R
 * # S
@@ -307,6 +351,8 @@
       [여기](https://eblo.tistory.com/55) 를 참조
 
   </details>
+  <br>
+  
 * # U
 * # V
 * # W

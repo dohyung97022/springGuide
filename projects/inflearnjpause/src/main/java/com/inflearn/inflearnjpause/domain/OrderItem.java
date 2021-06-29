@@ -1,11 +1,13 @@
 package com.inflearn.inflearnjpause.domain;
 
 import com.inflearn.inflearnjpause.domain.item.Item;
+import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Setter
+@Getter
 @Entity
 @Table
 public class OrderItem {
@@ -23,8 +25,12 @@ public class OrderItem {
     private Order order;
 
     @Column
-    private Long orderPrice;
+    private int orderPrice;
 
     @Column
-    private Long count;
+    private int count;
+
+    public void cancel() {
+        getItem().addStock(count);
+    }
 }
