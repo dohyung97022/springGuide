@@ -22,7 +22,8 @@ public class Category {
     @JoinTable(
             name = "category_item",
             joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id")
+            inverseJoinColumns = @JoinColumn(name = "item_id"),
+            foreignKey = @ForeignKey(name = "category_item_fk")
     )
     private List<Item> items = new ArrayList<>();
 
