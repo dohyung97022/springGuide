@@ -15,7 +15,7 @@ import java.util.List;
 public class MemberService {
 
     @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     // 회원 가입
     public Long join(Member member){

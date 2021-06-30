@@ -14,29 +14,46 @@
 * # B
 * # C
 * # D
+  <details>
+  <summary>
+  ddl-auto : 데이터베이스 스키마 생성 방침
+  </summary>
+  <br>
+  
+  application properties 에 `spring.jpa.hibernate.ddl-auto=` 형태로 존재한다.   
+  
+  create : 기존 태이블 삭제 후 다시 생성   
+  create-drop : create 와 같지만 종료 시점에 삭제   
+  update : 변경분만 반영   
+  validate : 엔티티와 테이블이 매핑되었는지 확인   
+  none : 사용안함   
+  
+  개발 초기 단계 : create, update    
+  테스트 서버 : update, validate      
+  운영 서버 : validate, none   
+  </details>
 * # E
   <details><summary>
-  @Entity 에서는 setter 를 열지 말자    
-
-  @Setter 가 열려 있어 너무 많은 변경 포인트가 있다면 유지보수가 어렵다
+  @Entity 에서는 setter 를 열지 말자
   </summary>
   <br>
 
-    * @Setter 는 그 의도를 파악하기 어렵다.    
-      또한 객체의 일관성을 보장하기 어렵다.     
-      Constructor, builder 를 최대한 활용하자.    
-      가령 사용하더라도 정해진 비즈니스 로직을 짜서 규정하고 사용하자.
+  @Setter 가 열려 있어 너무 많은 변경 포인트가 있다면 유지보수가 어렵다   
+  @Setter 는 그 의도를 파악하기 어렵다.    
+  또한 객체의 일관성을 보장하기 어렵다.     
+  Constructor, builder 를 최대한 활용하자.    
+  가령 사용하더라도 정해진 비즈니스 로직을 짜서 규정하고 사용하자.
   </details>
   <br>
   
   <details>
   <summary>
-  @Embeddable, @Embedded 를 활용하자    
-  
-  Entity 내부 Class 를 관계형 연결(일 대 다, 일 대 일...etc) 없이 나타낼 수 있다   
-  Java 내에서만 적용된다   
+  @Embeddable, @Embedded 를 활용하자
   </summary>
   <br>
+
+  Entity 내부 Class 를 관계형 연결(일 대 다, 일 대 일...etc) 없이 나타낼 수 있다         
+  Java 내에서만 적용된다   
   @Embeddable   
   
   ```java
@@ -75,13 +92,13 @@
 
   <details>
   <summary>
-  @Enumerated(EnumType.STRING) 로 enum column 을 만들자   
+  @Enumerated(EnumType.STRING) 로 enum column 을 만들자
+  </summary>
+  <br>
 
   반드시 EnumType.STRING 을 사용하자    
   Integer 는 enum 이 삭제/변경되었을 때 같은 숫자가 중복되어 사용된다   
-  </summary>
-  <br>
-    
+  
   ```java
   enum OrderStatus {
     ORDER, CANCEL;
@@ -105,13 +122,13 @@
 * # F
   <details>
   <summary>
-  Fetchtype 은 반드시 Lazy 로 지정한다    
-  
-  모든 연관된 테이블들이 딸려 나와서 n+1 폭탄을 맞고 싶지 않다면 lazy 로 사용하자   
-  쿼리는 본인이 customize 하여 최적화 할 수 있게끔 만들어야 한다   
+  Fetchtype 은 반드시 Lazy 로 지정한다
   </summary>
   <br>
-    
+
+  모든 연관된 테이블들이 딸려 나와서 n+1 폭탄을 맞고 싶지 않다면 lazy 로 사용하자      
+  쿼리는 본인이 customize 하여 최적화 할 수 있게끔 만들어야 한다   
+  
   fetchtype 을 지정하지 않은 경우   
   @ManyToOne 의 경우 FetchType 은 eager 이며   
   @OneToMany 의 경우 FetchType 은 lazy 이다.   
@@ -127,12 +144,12 @@
   <details>
   <summary>
   Foreign key 를 사용한다면 반드시 name 을 지정한다
-
-  연관 관계 중 foreign key 가 생성된다면 spring 에서 임의로 이름을 만든다   
-  임의로 지정된 이름은 JJ9J21D82 같은 gibberish 이기 때문에 user_account_fk 처럼 정의하자
   </summary>
   <br>
 
+  연관 관계 중 foreign key 가 생성된다면 spring 에서 임의로 이름을 만든다      
+  임의로 지정된 이름은 JJ9J21D82 같은 gibberish 이기 때문에 user_account_fk 처럼 정의하자   
+  
   ```java
   @JoinColumn(name = "account_id", foreignKey = @ForeignKey(name = "user_account_fk"))
   ``` 
@@ -144,9 +161,8 @@
 * # H
   <details>
   <summary>
-  H2   
+  H2 : 로컬에서 간편하게 연결하는 임시 데이터베이스
 
-  로컬에서 간편하게 연결하는 임시 데이터베이스
   </summary>
   <br>
 
@@ -190,9 +206,7 @@
 * # N
   <details>
   <summary>
-  n+1 문제    
-  
-  SELECT * query 이후 나온 n 만큼 다른 table 에서 SELECT 하는 쿼리 폭탄   
+  n+1 문제 : SELECT * query 이후 나온 n 만큼 SELECT 하는 쿼리 폭탄
   </summary>
   <br>
 
@@ -237,9 +251,7 @@
 * # P
   <details>
   <summary>
-  Persistance.xml 파일
-  
-  설정용 파일
+  Persistance.xml : 설정용 파일
   </summary>
   <br>
   application.properties 의 구 버전이다.   
@@ -285,14 +297,11 @@
 * # S
   <details>
   <summary>
-  spring-boot-devtools      
-
-  html 의 캐싱설정이나 .class 파일들의 변경을 감지해서 개발을 편리하게 하는 모듈
+  spring-boot-devtools : html 의 캐싱이나 .class 변경을 감지해서 개발을 편리하게 하는 도구
   </summary>
   <br>
 
     * 설치방법   
-      build.gradle 파일의 dependencies 에   
       <br>
       gradle 의 경우   
       `compileOnly ('org.springframework.boot:spring-boot-devtools')`   
@@ -321,9 +330,7 @@
 * # T
   <details>
   <summary>
-  thymeleaf   
-
-  ssr과 라우팅을 편리하게 하는 하는 모듈
+  thymeleaf : ssr과 라우팅을 편리하게 하는 하는 모듈
   </summary>
   <br>
 
@@ -352,6 +359,16 @@
 
   </details>
   <br>
+
+  <details>
+  <summary>
+  데이터베이스 적용을 원치 않는 변수는 @Transient로 만들자
+  
+  </summary>
+  <br>
+  
+  드랍다운 내용
+  </details>
   
 * # U
 * # V
@@ -365,11 +382,12 @@
 * # ㄷ
   <details>
   <summary>
-  다 대 다 관계는 절대 사용하지 말자   
-  
-  many to many 사이의 테이블은 entity 로 정의되지 않는다.   
-  Relation 으로 자동 생성되어서 변경에 용의하지 않다.   
+  다 대 다 관계는 절대 사용하지 말자
   </summary>
+  <br>
+  
+  many to many 사이의 테이블은 entity 로 정의되지 않는다.      
+  Relation 으로 자동 생성되어서 변경에 용의하지 않다.      
   </details>
 * # ㄹ
 * # ㅁ
@@ -378,13 +396,13 @@
 * # ㅇ
   <details>
   <summary>
-  연관관계 편의 메소드를 사용하자   
-
-  관계가 있는 entity 를 저장할 때 양측의 객체를 변경해야 한다.   
-  이를 method 로 묶자.
+  연관관계 편의 메소드를 사용하자
   </summary>
   <br>
 
+  관계가 있는 entity 를 저장할 때 양측의 객체를 변경해야 한다.   
+  이를 method 로 묶자.
+  
   ```java
     // many to one 관계 (Child to Parent)
     public void setParent(Parent parent){

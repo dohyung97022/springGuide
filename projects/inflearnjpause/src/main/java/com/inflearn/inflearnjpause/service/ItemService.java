@@ -3,6 +3,7 @@ package com.inflearn.inflearnjpause.service;
 import com.inflearn.inflearnjpause.domain.item.Item;
 import com.inflearn.inflearnjpause.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemService {
+
+    @Autowired
     private final ItemRepository itemRepository;
 
     public void saveItem(Item item){
