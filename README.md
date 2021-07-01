@@ -33,7 +33,8 @@
   운영 서버 : validate, none   
   </details>
 * # E
-  <details><summary>
+  <details>
+  <summary>
   @Entity 에서는 setter 를 열지 말자
   </summary>
   <br>
@@ -203,6 +204,15 @@
 * # K
 * # L
 * # M
+  <details>
+  <summary>
+  @ManyToMany 관계는 절대 사용하지 말자
+  </summary>
+  <br>
+
+  many to many 사이의 테이블은 entity 로 정의되지 않는다.      
+  Relation 으로 자동 생성되어서 변경에 용의하지 않다.
+  </details>
 * # N
   <details>
   <summary>
@@ -294,6 +304,45 @@
   </details>
 * # Q
 * # R
+  <details>
+  <summary>
+  (Relational methods) 연관관계 편의 메소드를 사용하자
+  </summary>
+  <br>
+
+  관계가 있는 entity 를 저장할 때 양측의 객체를 변경해야 한다.   
+  이를 method 로 묶자.
+
+  ```java
+    // many to one 관계 (Child to Parent)
+    public void setParent(Parent parent){
+        this.parent = parent;
+        parent.getChildren().add(this);
+    }
+
+    // one to many 관계 (Parent to Child)
+    public void addChild(Child child){
+        children.add(child);
+        child.setParent(this);
+    }
+  
+    // one to one 관계 (Husband to Wife)
+    public void setWife(Wife wife){
+        this.wife = wife;
+        wife.setHusband(this);
+    }
+    // many to many 는 사용하지 말자
+  ``` 
+
+  주의할 점이 있는데   
+  연관 관계 메소드가 정의된 곳을 규정해야 한다.   
+  Child 에 정의될지 Parent 에 정의될지 일관성이 필요하다.   
+  예를 들어 foreign key 가 단일 방향으로 설계되었다면   
+  Foreign key 가 규정된 entity 에 정의한다던지 원칙을 정해야 한다.
+
+  또한 양측에 편의 메소드를 정의하여 중복해서 넣는 실수가 생길 수 있다.   
+  단일한 방향에 setter를 만들어 사용을 강제하는 것이 좋다.
+  </details>
 * # S
   <details>
   <summary>
@@ -376,66 +425,6 @@
 * # X
 * # Y
 * # Z
-
-* # ㄱ
-* # ㄴ
-* # ㄷ
-  <details>
-  <summary>
-  다 대 다 관계는 절대 사용하지 말자
-  </summary>
-  <br>
-  
-  many to many 사이의 테이블은 entity 로 정의되지 않는다.      
-  Relation 으로 자동 생성되어서 변경에 용의하지 않다.      
-  </details>
-* # ㄹ
-* # ㅁ
-* # ㅂ
-* # ㅅ
-* # ㅇ
-  <details>
-  <summary>
-  연관관계 편의 메소드를 사용하자
-  </summary>
-  <br>
-
-  관계가 있는 entity 를 저장할 때 양측의 객체를 변경해야 한다.   
-  이를 method 로 묶자.
-  
-  ```java
-    // many to one 관계 (Child to Parent)
-    public void setParent(Parent parent){
-        this.parent = parent;
-        parent.getChildren().add(this);
-    }
-
-    // one to many 관계 (Parent to Child)
-    public void addChild(Child child){
-        children.add(child);
-        child.setParent(this);
-    }
-  
-    // one to one 관계 (Husband to Wife)
-    public void setWife(Wife wife){
-        this.wife = wife;
-        wife.setHusband(this);
-    }
-    // many to many 는 사용하지 말자
-  ``` 
-  
-  주의할 점이 있는데   
-  연관 관계 메소드가 정의된 곳을 규정해야 한다.   
-  Child 에 정의될지 Parent 에 정의될지 일관성이 필요하다.   
-  예를 들어 foreign key 가 단일 방향으로 설계되었다면   
-  Foreign key 가 규정된 entity 에 정의한다던지 원칙을 정해야 한다.   
-  </details>
-* # ㅈ
-* # ㅊ
-* # ㅋ
-* # ㅌ
-* # ㅍ
-* # ㅎ
 
 <details>
 <summary>드랍다운</summary>
