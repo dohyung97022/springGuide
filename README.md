@@ -211,7 +211,9 @@
   <br>
 
   many to many 사이의 테이블은 entity 로 정의되지 않는다.      
-  Relation 으로 자동 생성되어서 변경에 용의하지 않다.
+  Relation 으로 자동 생성되어서 변경에 용의하지 않다.   
+  
+  중간 테이블 엔티티를 직접 만들고 사용하도록 하자.   
   </details>
 
   <details>
@@ -220,6 +222,7 @@
   </summary>
   <br>
   
+  ![](images/@ManyToOne단방향.PNG)   
   Team 과 Member class 가 있다고 가정하면   
   Member class 에서
   ```java
@@ -229,8 +232,8 @@
   ``` 
   으로 team 을 매핑한다.   
   
-  그리고 단방향임으로 Member class 에서는 team 을 참조하지 않는다.   
-  그럼으로 team class 에서 `List<Member> members` 는 존재하지 않아도 된다.   
+  그리고 단방향임으로 Team class 에서는 members 을 참조하지 않는다.   
+  그럼으로 Team class 에서 `List<Member> members` 는 존재하지 않아도 된다.   
   </details>
   
   <details>
@@ -239,6 +242,7 @@
   </summary>
   <br>
   
+  ![](images/@ManyToOne양방향.PNG)   
   Team 과 Member class 가 있다고 가정하면   
   Member class 에서
   ```java
@@ -302,6 +306,98 @@
   
   </details>
 * # O
+  <details>
+  <summary>
+  @OneToMany 단방향 매핑
+  </summary>
+  <br>
+  
+  ![](images/@OneToMany단방향.PNG)    
+  Team class 내에서   
+  ```java
+  @OneToMany
+  @JoinColumn(name = "team_id")
+  private List<Member> members = new ArrayList<>();
+  ```
+  를 하면 되고 단방향이기에 member class 에서 지정하지 않는다.   
+  
+  동작은 한다. 다만!   
+  다음과 같은 구조에는 성능 최적화에 큰 문제가 있다.   
+  
+  예를 들어   
+  ```java
+  Member member = new Member("김도형");
+  em.persist(member);
+  
+  Team team = new Team("1조");
+  team.getMembers().add(member);
+  em.persist(team);
+  ```
+  에서      
+  ```java
+  Team team = new Team("1조");
+  team.getMembers().add(member);
+  em.persist(team);
+  ```
+  이 부분이 실행 될 때   
+  Team 객체 내에서는 members 가 존재하지만   
+  TEAM 테이블에는 members 를 지정할 수 있는 방법이 없다.   
+  그래서 hibernate 는 MEMBER table 의 TEAM_ID 를 조작하여   
+  UPDATE query 를 추가하게 되어 낭비가 일어난다.   
+  
+  @ManyToOne 단방향이나 양방향을 활용하자.   
+  Java 와 SQL 의 연결 구성이 같은 곳에서 일어나는 것을 알 수 있어 더 단순하고, 더 최적화에 용이하다.   
+  위의 문제도 member 는 team_id를 바로 지정하며 insert 되게 바뀐다.     
+  </details>
+  
+  <details>
+  <summary>
+  @OneToOne 단방향 매핑
+  </summary>
+  <br>
+  
+  ![](images/@OneToOne단뱡향.PNG)   
+  Member Class 에서   
+  ```java
+  @OneToOne
+  @JoinColumn(name = "LOCKER_ID")
+  private Locker locker;
+  ```
+  로 지정하면 된다.   
+  
+  반대로 locker 를 주체로 만들고 싶다면   
+  locker 에 `private Member member` 를 지정하면 된다.   
+  
+  단방향임으로 반대쪽에는 참조를 넣지 않는다.   
+  </details>
+  
+  <details>
+  <summary>
+  @OneToOne 양방향 매핑
+  </summary>
+  <br>
+  
+  ![](images/@OneToOne양방향.PNG)   
+  양방향의 경우 java 내에서는 양쪽이 그 반대쪽의 참조 변수를 갖고 있다.   
+  다만 SQL 은 member 한쪽에서만 foreign key 를 들고 있는 것을 볼 수 있다.   
+  
+  그럼으로 fk 가 들어있는 Member class 에서는   
+  ```java
+  @OneToOne
+  @JoinColumn(name = "LOCKER_ID")
+  private Locker locker;
+  ```
+  참조만 되는 Locker class 에서는   
+  ```java
+  @OneToOne(mappedBy = "locker")
+  private Member member;
+  ```
+  같이 작성하면 된다.   
+  
+  여기에서의 중점은    
+  `@JoinColumn` 이 지정된 쪽이 외부키 column 을 만드는 쪽이고   
+  `mappedBy` 를 사용하는 곳이 위의 외부키로 mapping 당하는 쪽이다.   
+  </details>
 * # P
   <details>
   <summary>
