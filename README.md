@@ -213,6 +213,50 @@
   many to many 사이의 테이블은 entity 로 정의되지 않는다.      
   Relation 으로 자동 생성되어서 변경에 용의하지 않다.
   </details>
+
+  <details>
+  <summary>
+  @ManyToOne 단방향 매핑
+  </summary>
+  <br>
+  
+  Team 과 Member class 가 있다고 가정하면   
+  Member class 에서
+  ```java
+  @ManyToOne
+  @JoinColumn(name = "team_id")
+  private Team team;
+  ``` 
+  으로 team 을 매핑한다.   
+  
+  그리고 단방향임으로 Member class 에서는 team 을 참조하지 않는다.   
+  그럼으로 team class 에서 `List<Member> members` 는 존재하지 않아도 된다.   
+  </details>
+  
+  <details>
+  <summary>
+  @ManyToOne 양방향 매핑
+  </summary>
+  <br>
+  
+  Team 과 Member class 가 있다고 가정하면   
+  Member class 에서
+  ```java
+  @ManyToOne
+  @JoinColumn(name = "team_id")
+  private Team team;
+  ``` 
+  Team class 에서
+  ```java
+  @OneToMany(mappedBy = "team")
+  private List<Member> members = new ArrayList<>();
+  ``` 
+  로 매핑한다.   
+  
+  여기에서 `@OneToMany` 의 `mappedBy` 는 member class 의 Team 객체 명 team 을 지정한다.   
+  
+  또한 Many 쪽이 외래키를 가져야 하고 One 쪽은 mapping 을 당하는 쪽이라서 수동태의 mappedBy 가 지정되는 것이다.   
+  </details>
 * # N
   <details>
   <summary>
@@ -425,10 +469,3 @@
 * # X
 * # Y
 * # Z
-
-<details>
-<summary>드랍다운</summary>
-<br>
-
-드랍다운 내용
-</details>
