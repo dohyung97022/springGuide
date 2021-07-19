@@ -35,6 +35,115 @@
 * # E
   <details>
   <summary>
+  @Enheritance 로 부모 클래스를 구현하자
+  </summary>
+  <br>
+
+  @SupperMapping 의 java 내부 구조는 같습니다.    
+  Extends 를 사용해서 부모를 지정해주는 형식입니다.   
+  다만 데이터베이스는 3가지로 다르게 구성할 수 있습니다.      
+  이 방식들에 따라 @SuperMapping 은 3가지 전략이 있습니다.
+
+  ### JOIN 전략
+  ![](images/@SupperMapping조인전략.PNG)   
+  부모 클래스 Item
+  ```java
+  @Entity
+  @Enheritance(strategy = InheritanceType.JOINED)
+  @DiscriminatorColumn
+  public class Item{
+    ...
+  }
+  ```
+  자식 클래스 Album/Movie/Book
+  ```java
+  @Entity
+  @DiscriminatorValue("A")
+  public class Album extends Item{
+    ...
+  }
+  ```
+  ALBUM, MOVIE, BOOK 은 각각 ITEM 의 ID를 받아오는 것을 알 수 있습니다.
+
+  여기에서 DTYPE 이라는 column 이 하나 존재하는데   
+  이 column 은 @DiscriminatorColumn 을 추가하면 생기는    
+  column 으로 자식이 어떤 class 에 속해있는지 String 으로 나타냅니다.      
+  @DiscriminatorColumn 은 생략이 가능합니다.
+
+  만약 테이블명 그대로 DTYPE 에 지정되는 것을 바꾸고 싶다면   
+  @DiscriminatorValue("A")으로 직접 자식 클래스에서 구분지을 수 있습니다.
+
+  저장은 java 에서 자식 클래스를 사용하면 부모의 parameter 에 접근할 수 있음으로
+  ```java
+  Album album = new Album();
+  album.setName("Son lux - Bones");
+  em.persist(album);
+  ```
+  같이 사용하시면 됩니다.
+
+  ### SINGLE_TABLE 전략
+  ![](images/@SupperMapping싱글테이블전략.PNG)   
+  jpa default 전략입니다.   
+  Child 와 Parent 를 단일한 테이블에 저장하는 단순한 방법입니다.   
+  Join 을 하지 않아 SQL query 의 성능적 이점을 갖습니다.   
+  다만 정규화 법칙을 따르지 않아 생기는 문제들도 고려해야 합니다.
+
+  부모 클래스의 item
+  ```java
+  @Entity
+  @Enheritance(strategy = InheritanceType.SINGLE_TABLE)
+  //@DiscriminatorColumn
+  public class Item{
+  ...
+  }
+  ```
+  자식 클래스의 Album/Movie/Book
+  ```java
+  @Entity
+  @DiscriminatorValue("A")
+  public class Album extends Item{
+    ...
+  }
+  ```
+  모든 내용은 위와 비슷비슷합니다.   
+  그런데 여기에서 특이한 점은 `@DiscriminatorColumn` 이 없어도   
+  무조건 DTYPE 의 column 이 만들어진다는 점입니다.   
+  DTYPE 가 만들어지지 않는다면 어떤 자식인지를 구분하는 것이 불가능합니다.   
+  물론 null 값이 어디에 들어갔는지 확인하는 방법이 있겠지만...   
+  효율적인 방법이라고 보지 않습니다.   
+  마지막으로 null 값들이 들어가서 DB 분들이 좋아하지 않습니다.   
+
+  ### TABLE_PER_CLASS 전략
+  ![](images/@SuperMapping테이블퍼클래스전략.PNG)      
+  이 전략은 부모 테이블을 생략하고 자식 테이블에 부모 param을 모두 넣는 전략입니다.    
+  부모 클래스의 item
+  ```java
+  @Entity
+  @Enheritance(strategy = InheritanceType.SINGLE_TABLE)
+  public class Item{
+  ...
+  }
+  ```
+  자식 클래스의 Album/Movie/Book
+  ```java
+  @Entity
+  public class Album extends Item{
+    ...
+  }
+  ```
+
+  여기에서 주의해서 보셔야 할 점은   
+  `@DiscriminatorColumn`, `@DiscriminatorValue`가 없어진다는 점입니다.   
+  위의 그림을 자세히 보시면 각 child 가 테이블로 분리되어서   
+  DTYPE 이 필요가 없어진다는 것을 알 수 있습니다.
+
+  이 전략은 치명적인 단점이 있습니다.   
+  한개의 id를 통해 찾으려고 한다면 3개의 테이블을 조회해야 합니다. 그래서 현업에서는 사용되지 않습니다.
+  </details>
+  <br/>
+
+  <details>
+  <summary>
   @Entity 에서는 setter 를 열지 말자
   </summary>
   <br>
@@ -215,6 +324,7 @@
   
   중간 테이블 엔티티를 직접 만들고 사용하도록 하자.   
   </details>
+  <br/>
 
   <details>
   <summary>
@@ -235,6 +345,7 @@
   그리고 단방향임으로 Team class 에서는 members 을 참조하지 않는다.   
   그럼으로 Team class 에서 `List<Member> members` 는 존재하지 않아도 된다.   
   </details>
+  <br>
   
   <details>
   <summary>
@@ -261,6 +372,42 @@
   
   또한 Many 쪽이 외래키를 가져야 하고 One 쪽은 mapping 을 당하는 쪽이라서 수동태의 mappedBy 가 지정되는 것이다.   
   </details>
+  <br/>
+
+  <details>
+  <summary>
+  @MappedSuperclass 로 공통된 column 들을 묶자
+  </summary>
+  <br>
+  
+  ![](images/@MappedSuperClass.PNG)   
+  두가지 객체에서 공통된 column 이 많이 사용된다 싶으면   
+  DB 에 적용되지 않으면서 다른 class 에 옮겨 통일시킬 수 있습니다.   
+  
+  BaseEntity   
+  ```java
+  @MappedSuperclass
+  public abstract class BaseEntity{
+    @Column
+    private String name;
+  }
+  ```
+  
+  Member   
+  ```java
+  @Entity
+  public class Member extends BaseEntity{
+    ...
+  }
+  ```
+  
+  @Inheritance 와 다른 점이라고 한다면   
+  Inheritance 는 부모관계에 따라 SQL 에도 적용되는 strategy 들이 있다는 점이다.   
+  그래서 `em.find(BaseEntity.class, id)` 같은 조회는 불가능하다.    
+  또한 직접 사용할 일이 없다면 abstract 를 붙여 추상 클래스로 바꾸자.   
+  </details>
+  <br>
+  
 * # N
   <details>
   <summary>
@@ -349,6 +496,7 @@
   Java 와 SQL 의 연결 구성이 같은 곳에서 일어나는 것을 알 수 있어 더 단순하고, 더 최적화에 용이하다.   
   위의 문제도 member 는 team_id를 바로 지정하며 insert 되게 바뀐다.     
   </details>
+  <br/>
   
   <details>
   <summary>
@@ -370,6 +518,7 @@
   
   단방향임으로 반대쪽에는 참조를 넣지 않는다.   
   </details>
+  <br/>
   
   <details>
   <summary>
@@ -398,6 +547,7 @@
   `@JoinColumn` 이 지정된 쪽이 외부키 column 을 만드는 쪽이고   
   `mappedBy` 를 사용하는 곳이 위의 외부키로 mapping 당하는 쪽이다.   
   </details>
+  <br/>
 * # P
   <details>
   <summary>
@@ -442,6 +592,43 @@
 
   필요에 따라 추가적으로 옵션을 넣을 수 있다.
   </details>
+  <br>
+
+  <details>
+  <summary>
+  Proxy : entityManager.getReference 로 받아진 lazy query 타입    
+  </summary>
+  <br>
+
+  ![](images/proxy.PNG)   
+  
+  프록시는 처음 em.getReference 로 받아집니다.   
+  받아진 프록시를 .getClass 를 할 경우 $HibernateProxy$ 하고 타입명이 다르게 나온다는 것을 볼 수 있습니다.        
+  
+  이제 get을 한다면 어떻게 될까요?    
+  프록시 안에는 target 이라고 정보를 가져올 객체의 포인터가 있습니다.   
+  해당 포인터가 null 을 가리킨다면 db에 쿼리를 날리고 target 을 체우는 형식으로 동작합니다.   
+  
+  그렇다면...   
+  ```java
+  Member member = em.getReference(Member.class, 1L);
+  member.getName();
+  soutv(member.getClass());
+  ```
+  는 어떻게 출력될까요?   
+  프록시로 출력될까요? 아니면 Member 로 출력될까요?   
+  
+  정답은 프록시입니다.   
+
+  위의 정답이 프록시로 나온다면 저희는 또 한가지 주의할 점이 있습니다.   
+  
+  바로 타입 체크에서 주의해야 한다는 점입니다.      
+  
+  `member.getClass() == Member.class` 를 사용할 것이 아니라...   
+  `member1 instanceof Member` 를 사용하셔야 일치하게 나옵니다.    
+  해당 프록시는 Member 를 상속받기 때문에 instanceof 가 true 로 나옵니다.   
+  </details>
+  <br>
 * # Q
 * # R
   <details>
