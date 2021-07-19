@@ -555,6 +555,7 @@
   </summary>
   <br>
   application.properties 의 구 버전이다.   
+  resources/META-INF/persistence.xml 에 들어간다.   
   
   ```
   <?xml version="1.0" encoding="UTF-8"?>
