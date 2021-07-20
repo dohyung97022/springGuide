@@ -671,6 +671,51 @@
   또한 양측에 편의 메소드를 정의하여 중복해서 넣는 실수가 생길 수 있다.   
   단일한 방향에 setter를 만들어 사용을 강제하는 것이 좋다.
   </details>
+  <br>
+  
+  <details>
+  <summary>
+  이제부터 ResponseEntity 로 모든 RestController 를 return 하자
+  </summary>
+  <br>
+  
+  ```java
+  // 상품 상세 페이지 (단일 상품 정보 가져오기)
+  @GetMapping(value = "product/{id}")
+  public ResponseEntity<ResponseDTO> getById(@PathVariable long id) {
+      return ResponseEntity.ok().body(productService.findOne(id));
+  }
+  ```
+  이 코드에서는 builder method 를 사용했습니다.   
+  `ResponseEntity` `.ok` 로 이어지는 것을 보면    
+  `ResponseEntity` 빌더에 httpStatusCode 를 지정할 수 있습니다.    
+  그래서 이렇게 변경이 가능하다.    
+
+  `ResponseEntity.ok()` 200   
+  `ResponseEntity.badRequest()` 400   
+  `ResponseEntity.internalServerError()` 500   
+  
+  이 외에도 3~4개 정도 더 있지만 다양한 status 들을 모두 포함하고 있지는 않습니다.   
+
+  그래서 builder 안에는 `.status()` 구문이 있는데   
+  `ResponseEntity.status(HttpStatus.ACCEPTED)` 같이 사용하면   
+  `HttpStatus` 클래스 내의 다양한 status code 들을 사용할 수 있습니다.       
+  
+  이 외에도 `new ResponseEntity<>(response, HttpStatus.ACCEPTED);` 같은 방법도 있습니다.    
+  이는 앞에 선언 후 중간에 response 를 변경해야 할 경우에 사용하면 좋을 것 같습니다.    
+  
+  `.contentType(MediaType.APPLICATION_JSON)` 같이   
+  application type header 를 추가할 수 있고   
+  
+  `.header(HttpHeaders.CONTENT_LANGUAGE,"ko-KR")` 처럼   
+  header 에 자주 쓰이는 구문들을 `HttpHeaders` 에서 가져와 사용할 수 있습니다.   
+  
+  마지막으로 `.body(response)` 를 붙여 response 를 돌려주면 됩니다.   
+  
+  
+  </details>
+  <br>
+  
 * # S
   <details>
   <summary>
