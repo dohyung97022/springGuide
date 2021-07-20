@@ -689,7 +689,7 @@
   이 코드에서는 builder method 를 사용했습니다.   
   `ResponseEntity` `.ok` 로 이어지는 것을 보면    
   `ResponseEntity` 빌더에 httpStatusCode 를 지정할 수 있습니다.    
-  그래서 이렇게 변경이 가능하다.    
+  그래서 이렇게 변경이 가능합니다.    
 
   `ResponseEntity.ok()` 200   
   `ResponseEntity.badRequest()` 400   
