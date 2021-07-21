@@ -18,16 +18,17 @@
   cascadeType.Persist : 부모가 영속되면 자식도 적용 
   </summary>
   <br>
-  실제로는 반드시 부모 자식의 관계라고 생각하시기보단   
-  cascadeType.Persist 가 들어간 클래스와 그 연관된 클래스 관계입니다.   
+  
+  실제로는 반드시 부모 자식의 관계라고 생각하시기보단    
+  cascadeType.Persist 가 들어간 클래스와 그 연관된 클래스 관계입니다.    
   
   @OneToMany, @ManyToOne 관계를 만든다고 가정하겠습니다.   
   CascadeType.PERSIST 를 적용하고 싶다고 생각하겠습니다.   
   여기에서 잠시 질문을 하나 드리면   
   
-  @OneToMany(cascade = CascadeType.PERSIST) 가 좋을까요?      
+  @OneToMany(cascade = CascadeType.PERSIST) 가 맞을까요?      
   아니면   
-  @ManyToOne(cascade = CascadeType.PERSIST) 가 좋을까요?   
+  @ManyToOne(cascade = CascadeType.PERSIST) 가 맞을까요?   
   
   여기에서 정답은?   
   "전혀 상관 없다." 입니다.   
