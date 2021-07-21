@@ -13,6 +13,120 @@
 * # A
 * # B
 * # C
+  <details>
+  <summary>
+  cascadeType.Persist : 부모가 영속되면 자식도 적용 
+  </summary>
+  <br>
+  실제로는 반드시 부모 자식의 관계라고 생각하시기보단   
+  cascadeType.Persist 가 들어간 클래스와 그 연관된 클래스 관계입니다.   
+  
+  @OneToMany, @ManyToOne 관계를 만든다고 가정하겠습니다.   
+  CascadeType.PERSIST 를 적용하고 싶다고 생각하겠습니다.   
+  여기에서 잠시 질문을 하나 드리면   
+  
+  @OneToMany(cascade = CascadeType.PERSIST) 가 좋을까요?      
+  아니면   
+  @ManyToOne(cascade = CascadeType.PERSIST) 가 좋을까요?   
+  
+  여기에서 정답은?   
+  "전혀 상관 없다." 입니다.   
+  
+  @OneToMany, @ManyToOne 관계는 상관이 없습니다.   
+  
+  CascadeType.PERSIST 가 의미하는 바는   
+  내가 쓰인 곳이 PERSIST 된다면, 연관관계의 entity 도 PERSIST 해줘 입니다.   
+  
+  예를 들어   
+  ```java
+  Parent parent = new Parent();
+  parent.addChild(new Child());
+  em.persist(parent);
+  ```
+  를 한다면, persist는 parent 하나만 적었지만   
+  parent 와 child 둘다 persist 되어 저장됩니다.      
+  
+  ![](images/cascadeType.PERSIST.PNG)   
+  
+  entityManager 가 죽어가서 JPARepository 로 바꿔보면         
+  ```java
+  Parent parent = new Parent();
+  parent.addChild(new Child());
+  parentRepository.add(parent);
+  ```
+  가 되겠습니다.   
+  
+  @OneToOne, @OneToMany, @ManyToOne, 어떤 관계이든   
+  persist 가 되는 객체에서 지정하여 사용할 수 있습니다.   
+  
+  cascadeType.Remove 만큼 조심하게 사용하실 필요는 없지만      
+  단일하고 연속적으로 생성되는 entity 에 사용하면 좋을 것 같습니다.   
+  생각좀 하고 살자 도형아.   
+  </details>
+  <br>
+  
+  <details>
+  <summary>
+  cascadeType.Remove : 부모가 삭제되면 자식도 적용
+  </summary>
+  <br>
+
+  실제로는 반드시 부모 자식의 관계라고 생각하시기보단    
+  cascadeType.Remove 가 들어간 클래스와 그 연관된 클래스 관계입니다.   
+  
+  cascadeType.Remove 는 .Persist 와 같은 맥락입니다.   
+  cascadeType 가 이해가 안되신다면, 먼저 .Persist 를 보고 와주세요.   
+  
+  그런데 여기에서 궁굼증이 하나 생겼습니다.   
+  
+  ![](images/cascadeType.PERSIST.PNG)   
+  
+  다음과 같이 저장되어 있다고 할 때   
+    
+  parentClass 에서는   
+  ```java
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
+  List<Child> children = new ArrayList<>();
+  ```
+  다음과 같이 정의되어 있다면...   
+  
+  A   
+  ```java
+  Parent parent = em.find(Parent.class, 1L);
+  parent.getChildren().remove(0); 
+  em.persist(parent);
+  em.flush();
+  em.clear();
+  ```
+  
+  B   
+  ```java
+  Parent parent = em.find(Parent.class, 1L);
+  // parent.getChildren().remove(0);  
+  em.remove(parent);
+  em.flush();
+  em.clear();
+  ```
+
+  A 와 B 중에서 어떤 방법이 children 을 삭제할까요?   
+  
+  <br>
+  직접 확인해본 결과 정답은 B 였습니다.   
+  
+  A 에서 삭제가 적용되길 원하신다면 orphanRemoval 을 사용하셔야 합니다.
+
+  </details>
+  <br>
+  
+  <details>
+  <summary>
+  cascadeType.All : 부모의 영속성 컨텍스트를 자식도 적용
+  </summary>
+  <br>
+  
+  위 2개 외에도 모든 cascadeType 을 자식에게 적용합니다.
+  </details>
+  <br>
 * # D
   <details>
   <summary>
