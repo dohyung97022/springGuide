@@ -16,12 +16,11 @@ public class InflearnjpabasicApplication {
         tx.begin();
 
         try{
-            Parent parent = new Parent();
-
-            parent.setName("hello");
-            parent.addChild(new Child("김도형"));
+            Parent parent = em.find(Parent.class, 1L);
+            parent.setChild(null);
 
             em.persist(parent);
+
             em.flush();
             em.clear();
 

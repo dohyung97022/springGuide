@@ -663,6 +663,61 @@
   `mappedBy` 를 사용하는 곳이 위의 외부키로 mapping 당하는 쪽이다.   
   </details>
   <br/>
+  
+  <details>
+  <summary>
+  OrphanRemoval = true 로 연관관계 내의 자식을 자동 삭제하자
+  </summary>
+  <br>
+  
+  CascadeType.REMOVE 는 부모가 삭제되면 자식이 삭제된다는 성질을 뜁니다.   
+  하지만 .REMOVE 는 arrayList 같이 지정된 parameter 에서 remove 된 자식은 적용하지 않았습니다.   
+  이러한 기능을 OrphanRemoval 이 수행해줍니다.   
+  
+  ```java
+  @OneToMany(orphanRemoval=true)
+  List<Child> children = new ArrayList<>();
+  ```
+  로 parent 에서 지정된다면   
+  자식이 1개 있을 때     
+  ```java
+  Parent parent = em.find(Parent.class, 0);
+  parent.getChildren().remove(0);
+  em.persist(parent);
+  ```
+  하면 자식이 자동으로 삭제된다는 의미입니다.
+
+  물론 이는 @OneToMany 의 관계 뿐만 아니라 @OneToOne 관계에도 적용됩니다.   
+  List 가 아니라 단일 parameter 도 setter 로 null 을 만들어 삭제할 수 있다는 의미입니다.      
+
+  ```java
+  Parent parent = em.find(Parent.class, 1L);
+  parent.setChild(null);  
+  em.persist(parent);
+  ```
+
+  ![](images/orphanremoval%20의심.PNG)    
+  자신의 주장이 의심되어 확인해보는 피곤한 성격...   
+  
+  그리고 CascadeType.REMOVE 의 특징을 그대로 갖고 있습니다.      
+  부모 entity 가 삭제되면 자식 entity 도 삭제됩니다.   
+  
+  어! 그러면 persist 된 객체에 그대로 적용하면 데이터베이스에도 바로 적용되니까 좋잖아?!   
+  개꿀! 하면서 남용하시면 큰일납니다.   
+  
+  우선 관계가 완전히 단일하며 종속적이여야 합니다.   
+  즉 child 는 parent 외 다른 곳에 fk 가 있으면 안됩니다.      
+  fk 에러가 뜨면서 삭제가 안될 수 있습니다.   
+  당연한 예기일지도 모르겠지만 그래도 2번 체크합시다.   
+
+  <br>
+  
+  OrphanRemoval = true 의 자식은    
+  부모에게 완전 종속적인가요?   
+  다른 곳의 fk 로 사용되고 있지 않나요?    
+  
+  </details>
+  <br>
 * # P
   <details>
   <summary>

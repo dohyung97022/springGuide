@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Setter
 @Getter
@@ -20,11 +18,10 @@ public class Parent {
 
     private String name;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.)
-    List<Child> children = new ArrayList<>();
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.PERSIST, mappedBy = "parent")
+    Child child;
 
-    public void addChild(Child child){
-        children.add(child);
-        child.setParent(this);
+    public Parent(String name) {
+        this.name = name;
     }
 }

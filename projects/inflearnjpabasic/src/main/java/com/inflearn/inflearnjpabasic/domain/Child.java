@@ -15,8 +15,7 @@ public class Child {
 
     String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "member_id")
+    @OneToOne
     Parent parent;
 
     public Child(String name) {
