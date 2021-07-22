@@ -277,8 +277,11 @@
   </summary>
   <br>
 
-  Entity 내부 Class 를 관계형 연결(일 대 다, 일 대 일...etc) 없이 나타낼 수 있다         
+  Entity 내부 Class 를 관계형 연결(일 대 다, 일 대 일...etc) 없이 나타낼 수 있다.   
+  @Embedded 안에는 @NoArgsConstructor 가 필요하다.    
+  
   Java 내에서만 적용된다   
+  
   @Embeddable   
   
   ```java
@@ -310,8 +313,107 @@
   }
   ``` 
   
-  Java 내에서만 적용되며 database 에 관계형으로 정의되지 않는다.   
-  ![](../../../../../../images/@embedded.PNG)
+  Java 내에서만 적용되며 database 에 관계형으로 정의되지 않는다.    
+  
+  ![](images/@embedded.PNG)   
+
+  이제 조금 더 심화된 내용으로 들어가면...   
+  
+  임베디드의 연관관계    
+  
+  ![](images/@EmbeddedMapping.PNG)    
+  
+  임베디드 클레스에 임베디드 클래스를 넣으면 조금 더 정리 정돈이 될 수 있습니다.          
+
+  @Entity 안에 @Embedded 안에 @Embedded 를 넣어봅시다.
+
+  ```java
+  @Entity
+  public class Parent {
+  
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  @Embedded
+  private Embedable embedable;
+  }
+  ```
+  entity
+
+  ```java
+  @NoArgsConstructor
+  @Embeddable
+  public class embeddable {
+  
+      private String jack;
+  
+      @Embedded
+      private Embedable2 embedable2;
+  }
+  ```
+  entity -> embedded
+
+    ```java
+  @NoArgsConstructor
+  @Embeddable
+  public class embeddable2 {
+  
+      private String shit;
+  }
+  ```
+  entity -> embeddable -> embeddable2    
+
+  모든 embeddable 은 반드시 @NoArgsConstructor 를 갖고 있어야 합니다.    
+
+  이렇게 만들면     
+  
+  ![](images/@EmbeddedTypeJoin.PNG)    
+  테이블은 이렇게 정의됩니다.   
+  
+  이제 entity -> embeddable -> embeddable2 관계는 가능하니...   
+  entity -> embeddable -> entity2 을 구현해보겠습니다.   
+  
+  위의 클래스는 다 그대로 가져가는데 Embeddable2 만 좀 수정하면 됩니다.      
+  
+  ```java
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Getter
+  
+  @Embeddable
+  public class Embeddable2 {
+  
+  private String jack;
+  
+      // 위어서 추가되는 부분
+      @OneToOne
+      @JoinColumn(name = "ENTITY_CHILD_ID")
+      private EntityChild entityChild;
+  }
+  ```
+  
+  그리고 추가되는 EntityChild Class 를 만듭니다.   
+  
+  ```java
+  @Getter
+  @NoArgsConstructor
+  
+  @Entity
+  @Table(name = "ENTITY_CHILD")
+  public class EntityChild {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  }
+  ```
+  
+  이렇게 되면   
+  ![](images/@EmbeddedEntity.PNG)   
+  가 됩니다.    
+  
+  하면서 이상하게 query 가 테이블 명을 잘못 적어서 @Table 을 지정해줘야 했지만 
+  이정도 에러들은 다 잡아내실 수 있는 분들이라 믿습니다.   
   </details>
   <br>
 
