@@ -10,6 +10,81 @@
 [인프런 김영한님 완전 정복 로드맵](https://www.inflearn.com/roadmaps/149)   
 [스파르타 웹개발의 봄, Spring](https://spartacodingclub.kr/)
 
+* # 원리
+  <details>
+  <summary>
+  영속성 컨텍스트
+  </summary>
+  <br>
+  
+  ![](images/영속성.png)    
+
+  영속성 컨텍스트를 이해하기 위해서는 '영속하다' 라는 말의 의미를 이해해야 한다.    
+  영속하다, persist 는 '영원히 지속하다' 라는 의미를 갖고 있습니다.    
+  
+  즉 컨텍스트라는 곳에서 ORM 된 객체의 정보를 지속적으로 관리하며 DB에 영속시킨다는 의미입니다.   
+
+  * 비영속(New)    
+    자바 내에서 new 로 생성할 경우   
+    영속성 컨텍스트와 아무런 관련이 없는 상태   
+    `User user = new User();`   
+    <br>
+    
+  * 영속(Managed)   
+    컨텍스트 안에서 관리중인 상태   
+    `em.persist(user);` `em.find(user);`   
+    <br>
+    
+  * 준영속(Detached)   
+    컨텍스트 안에서 더는 관리하지 않는 상태    
+    비영속 상태와 비슷하지만 다릅니다.   
+    준 영속 상태는 한번 영속이 되어서 식별자 (id) 값이 존재한다.   
+    `em.detach(user)` `em.clear()` `em.close()`   
+    <br>
+    
+  * 삭제(Removed)    
+    컨텍스트 안에서도 삭제를 하고 데이터베이스 안에서도 삭제한 상태
+    <br>
+  </details>
+  <br>
+  
+  <details>
+  <summary>
+  Dirty Checking
+  </summary>
+  <br>
+
+  ![](images/dirty%20checking.jfif)   
+  
+  영속성 컨텍스트의 Managed(영속) 상태의 객체는 1차 캐시 저장소에
+  snapshot 이라는 복사본이 저장됩니다.
+  
+  이 snapshot 과 해당 객체의 내용이 다르다면 변경이 감지됩니다.   
+  
+  변경은 바로 저장되지 않고 쿼리문 저장소에 저장되었다가 `flush()` 가 일어난 시점에서 DB에 변경사항을 적용합니다.   
+  
+  예를 들어   
+  ```java
+  EntityManager em = entityManagerFactory.createEntityManager();
+  EntityTransaction tx = em.getTransaction();
+  tx.begin();
+  // managed 상태
+  User user = em.find(User.class, id);
+  // managed 상태의 객체 변경
+  user.changePassword(password);
+  // 트렌젝션 커밋
+  tx.commit();
+  ```
+  
+  위 코드에는 `user` 를 save 하라는 예기는 어디에도 없습니다.   
+  
+  `tx.commit()` 을 실행할 때 dirty checking 의 쿼리문 저장소에 저장된 쿼리를 실행시켜서 
+  코드상으로 명시하지 않더라도 user 의 정보가 변경되는 것입니다.   
+  
+  </details>
+  <br>
+  <br>
+
 * # A
 * # B
 * # C
