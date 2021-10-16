@@ -148,6 +148,42 @@
   테스트 서버 : update, validate      
   운영 서버 : validate, none   
   </details>
+  <br>
+
+  <details>
+  <summary>
+  DTO
+  </summary>
+  <br>
+
+  data-transfer-object
+
+  데이터가 지속적으로 변경되며 전송될 경우 사용하는 클래스입니다.
+
+  데이터의 값들이 코드가 진행되면서 변경되며 조작되어야 할 때 사용합니다.
+
+  `@Getter`, `@Setter` 를 포함시켜 코드가 진행되는 중 setter 를 통해 변경시킵니다.
+
+  ```java
+  @Getter
+  @Setter
+  public class TravelerDTO {
+    private String name;
+    private Integer age;
+  }
+  
+  public class Travel {
+    public void travelForYear(TravelerDTO travelerDTO){
+        travelerDTO.setAge(travelerDTO.getAge() + 1);
+    } 
+  }
+  ```
+
+  @Setter 의 추가는 persistance 안에 들어가서 ORM 된 클래스에만 없어야 하는 것입니다.
+
+  ORM 된 이후에 변경이 되면 db 에도 변경되기에 혼선이 생기는 것을 방지하기 위해 orm 클래스의 @Setter 를 방지하는 것입니다.
+  </details>
+  <br>
 * # E
   <details>
   <summary>
