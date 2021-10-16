@@ -1,24 +1,17 @@
 package com.inflearn.inflearnjpabasic.domain;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity
-@Setter
+@Getter
 @NoArgsConstructor
-public class Child {
+
+@Entity
+@Table(name = "ENTITY_CHILD")
+public class EntityChild {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
-    String name;
-
-    @OneToOne
-    Parent parent;
-
-    public Child(String name) {
-        this.name = name;
-    }
+    private Long id;
 }

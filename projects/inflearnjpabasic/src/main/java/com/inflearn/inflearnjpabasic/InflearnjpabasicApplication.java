@@ -1,6 +1,8 @@
 package com.inflearn.inflearnjpabasic;
 
-import com.inflearn.inflearnjpabasic.domain.Child;
+import com.inflearn.inflearnjpabasic.domain.Embedable;
+import com.inflearn.inflearnjpabasic.domain.Embedable2;
+import com.inflearn.inflearnjpabasic.domain.EntityChild;
 import com.inflearn.inflearnjpabasic.domain.Parent;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,11 +18,17 @@ public class InflearnjpabasicApplication {
         tx.begin();
 
         try{
-            Parent parent = em.find(Parent.class, 1L);
-            parent.setChild(null);
+            //EntityChild entityChild = new EntityChild();
+
+            //em.persist(entityChild);
+            //em.flush();
+
+            EntityChild entityChild = em.find(EntityChild.class, 1L);
+
+            Parent parent = new Parent();
+            parent.setEmbedable(new Embedable("jack", new Embedable2("shit", entityChild)));
 
             em.persist(parent);
-
             em.flush();
             em.clear();
 
