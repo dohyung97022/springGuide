@@ -186,6 +186,30 @@
   ORM 된 이후에 변경이 되면 db 에도 변경되기에 혼선이 생기는 것을 방지하기 위해 orm 클래스의 @Setter 를 방지하는 것입니다.
   </details>
   <br>
+  
+  <details>
+  <summary>
+  DAO
+  </summary>
+  <br>
+  
+  data access object   
+  
+  데이터의 접근을 위한 클래스를 뜻합니다.   
+  CRUD 같이 데이터의 접근을 위한 function 들을 정의하고 있습니다.   
+  
+  예를 들어 jpa 의 repository / mybatis 의 wrapper 는 DAO 입니다.   
+  
+  ```java
+  @Repository
+  public interface UserDAO {  // DAO 라는 명칭이나 repository 라는 명칭이나 중요하지 않지만
+    public void createUser();  // 회사의 규졍과 규칙을 따르는 것은 중요합니다.
+    public void deleteUser();  // 엔트로피를 생성하지 맙시다 ㅋㅋ
+    public User getUserById(Integer id);
+  } 
+  ```
+  </details>
+  <br>
 * # E
   <details>
   <summary>
