@@ -3,7 +3,8 @@
 ### 이 Repository는
 
 스프링을 공부하고 정리하고자 남겼습니다.   
-기억이 애매하면 ctrl+f 하기 위해 남깁니다.
+기억이 애매하면 ctrl+f 하기 위해 남깁니다.   
+[Mybatis](MYBATIS.md) 는 따로 분리되어 있습니다.
 
 ### Studied from
 
