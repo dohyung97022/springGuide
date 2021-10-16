@@ -1103,6 +1103,40 @@
   
 * # U
 * # V
+  <details>
+  <summary>
+  VO
+  </summary>
+  <br>
+  
+  value object   
+  
+  값 객체   
+  
+  번역에서도 알 수 있듯이 값을 나타내기 위한 객체로 그 값의 변동이 있어서는 안됩니다.   
+  @Setter 를 설정하지 않고 constructor 를 통해 final 변수들을 지정합니다.   
+  
+  db 에서 받은 값을 VO 로 오해하실 수 있지만 DB 에서 받는 값은 DAO data-access-object 입니다.   
+  
+  ```java
+  @Getter
+  public class ResponseVO {
+    private final Integer code;
+    private final Method method;
+    private final String body;
+  
+    // 생성자로 final 값들을 만들고 더이상 변동시키지 않는다.
+    public ResponseVO(Integer code, Method method, String body){
+      this.code = code;
+      this.method = method;
+      this.body = body;
+    }
+  }
+  ```
+  
+  회사에서 이 규칙이 잘 지켜지지 않는다는 것이 함정...   
+  </details>
+  <br>
 * # W
 * # X
 * # Y
