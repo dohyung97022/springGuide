@@ -65,6 +65,53 @@
 * # Q
 * # R
 * # S
+  <details>
+  <summary>
+  selectKey, insert 이후에 id 를 받는 방법
+  </summary>
+  <br>
+  
+  db 와 접근하는 코드를 작성하시다 보면 저장된 요소의 id 값에 접근하셔야 할 때가 많습니다.   
+  
+  SQL 구문을 통해 INSERT 할 때 그 id 값을 지정하거나, 사용할 때 활용됩니다.   
+  
+  |요소|의미|
+  |:---:|:---:|
+  |keyProperty|selectKey 구문의 결과가 들어갈 오브젝트의 변수명|
+  |keyColumn|리턴되는 결과의 컬럼명|
+  |resultType|결과의 타입, 생략 가능|
+  |order|BEFORE / AFTER selectKey 가 실행되는 위치|
+  <br>
+
+  가장 많이 쓰이는 예시로는 INSERT 이후 id 값을 가져오는 방법입니다.    
+
+  ```sql
+  <insert id="add" userGeneratedKeys="true" keyProperty="userId" keyColumn="user_id" parameterType="...">
+    INSERT INTO schema.user (name, age)
+    VALUES (name, age)
+    
+    <selectKey keyProperty="userId" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
+  ```
+  <br>
+  
+  이렇게 작성하시면 `add()` 가 사용될 때 들어가는 parameterType 의 keyProperty 값이 id 로 지정됩니다.
+
+  ```java
+  User user = new User("김도형", 25);
+  userDAO.add(user);
+  user.getId(); // 641 과 같이 id 값이 지정되어 나옵니다. 
+  ```
+  <br>
+  
+  다만 이 경우 db 가 LAST_INSERT_ID() 를 지원해야 합니다.   
+  
+  <del>  ORACLE 은 너무 비싸서 어짜피 다들 MYSQL 쓰잖아요? ㅋㅋㅋㅋ </del>
+  </details>
+  <br>
+
 * # T
 * # U
 * # V
